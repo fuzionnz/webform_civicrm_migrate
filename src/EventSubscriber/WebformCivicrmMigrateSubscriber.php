@@ -333,7 +333,7 @@ class WebformCivicrmMigrateSubscriber implements EventSubscriberInterface {
       'dupes_allowed' => FALSE,
       'filter_relationship_types' => [],
       'filter_relationship_contact' => [],
-      'group' => [],
+      'group' => '',
       'tag' => [],
       'check_permissions' => 1,
       'expose_list' => FALSE,
