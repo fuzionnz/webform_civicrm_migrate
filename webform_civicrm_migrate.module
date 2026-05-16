@@ -19,3 +19,36 @@ function webform_civicrm_migrate_webform_handler_invoke_alter(\Drupal\webform\Pl
     }
   }
 }
+
+/**
+* Implements hook_webform_submission_form_alter().
+*
+* Shows a warning on any webform that has a CiviCRM handler while
+* this migration module is still enabled.
+*/
+function webform_civicrm_migrate_webform_submission_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if (!\Drupal::currentUser()->hasPermission('administer modules')) {
+    return;
+  }
+
+  $form_object = $form_state->getFormObject();
+  if (!$form_object instanceof \Drupal\webform\WebformSubmissionForm) {
+    return;
+  }
+
+  $webform = $form_object->getWebform();
+  $handlers = $webform->getHandlers('webform_civicrm');
+  if ($handlers->count() === 0) {
+    return;
+  }
+
+  $form['webform_civicrm_migrate_warning'] = [
+    '#type' => 'markup',
+    '#markup' => '<div role="alert" class="messages messages--warning">'
+      . t(
+          '<strong>Warning:</strong> No data will be submitted to CiviCRM until the <em>webform_civicrm_migrate</em> module is disabled.',
+        )
+      . '</div>',
+    '#weight' => -1000,
+  ];
+}
